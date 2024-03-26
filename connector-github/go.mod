@@ -1,4 +1,4 @@
-module github.com/apache/incubator-answer-plugins/connector-github
+module github.com/push-edp/incubator-answer-plugins/connector-github
 
 go 1.19
 
