@@ -117,14 +117,11 @@ func (g *Connector) ConnectorReceiver(ctx *plugin.GinContext, receiverURL string
 	}
 
 	// guarantee email was verified
-	userInfo.Email = g.guaranteeEmail(userInfo.Email, token.AccessToken)
+	userInfo.Email = g.guaranteeEmail(token.AccessToken)
 	return userInfo, nil
 }
 
-func (g *Connector) guaranteeEmail(email string, accessToken string) string {
-	if len(email) == 0 {
-		return ""
-	}
+func (g *Connector) guaranteeEmail(accessToken string) string {
 	client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: accessToken},
 	))
@@ -137,9 +134,12 @@ func (g *Connector) guaranteeEmail(email string, accessToken string) string {
 		return ""
 	}
 	for _, e := range emails {
-		if e.GetEmail() == email && e.GetVerified() {
-			log.Infof("email %s was verified", email)
-			return email
+		if e.GetVerified() && e.GetPrimary() {
+			email := e.GetEmail()
+			if len(email) > 0 {
+				log.Infof("primary email %s was verified", email)
+				return email
+			}
 		}
 	}
 	return ""
