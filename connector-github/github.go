@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/apache/incubator-answer-plugins/connector-github/i18n"
+	"github.com/push-edp/incubator-answer-plugins/connector-github/i18n"
 	"github.com/apache/incubator-answer/plugin"
 	"github.com/google/go-github/v50/github"
 	"github.com/segmentfault/pacman/log"
@@ -134,6 +134,7 @@ func (g *Connector) guaranteeEmail(accessToken string) string {
 		return ""
 	}
 	for _, e := range emails {
+		log.Infof("github email %s %v", e.GetEmail(), e) 
 		if e.GetVerified() && e.GetPrimary() {
 			email := e.GetEmail()
 			if len(email) > 0 {
